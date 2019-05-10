@@ -2,7 +2,9 @@ package it.my.test.mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +36,7 @@ public class MockitoFeignTest {
 	@BeforeClass
 	public static void setupFactory() {
 		factory = new PodamFactoryImpl();
+		factory.getStrategy().addOrReplaceTypeManufacturer(String.class, new NumericStringManufacturer());
 	}
 	
 	
@@ -49,6 +52,9 @@ public class MockitoFeignTest {
 	@Test
 	public void testPojo() {
 		MockablePojo mock = factory.manufacturePojo(MockablePojo.class);
+		
+		assertTrue(StringUtils.isNumeric(mock.getDesc()));
+		
 		mock.setDesc("MOCK");
 
 		Mockito.when(cli.getPojo()).thenReturn(mock);		
